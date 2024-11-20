@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Chat Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #800000;
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header img {
+            height: 100px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+
+        .container {
+            display: block;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        #chat {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+            background-color: #f9f9f9;
+        }
+
+        textarea {
+            flex-grow: 1;
+            height: 50px;
+            resize: none;
+        }
+
+        button {
+            background-color: #800000;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 25px;
+            flex-shrink: 0;
+        }
+
+        button:hover {
+            background-color: #990000;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/kyunghee_logo.png') }}" alt="Logo">
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Chat</a>
+            <a href="#">Support</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Chat with LLM</h1>
+        <div class="input-container">
+            <textarea id="inputText" placeholder="Type your message here..."></textarea>
+            <button id="sendButton" onclick="sendMessage()">Send</button>
+        </div>
+        <div id="chat">
+            <!-- Chat messages will appear here -->
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("inputText").addEventListener("keydown", function (event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        async function sendMessage() {
+            const inputText = document.getElementById("inputText").value;
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ input: inputText })
+                });
+
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+
+                const result = await response.json();
+                const chatDiv = document.getElementById("chat");
+
+                const llmResponse = result.response.response;
+
+                chatDiv.innerHTML += `<p><strong>You:</strong> ${inputText}</p>`;
+                chatDiv.innerHTML += `<p><strong>LLM:</strong> ${llmResponse}</p>`;
+
+                document.getElementById("inputText").value = "";
+            } catch (error) {
+                console.error("There was an error with the fetch operation:", error);
+                alert("An error occurred. Please try again.");
+            }
+        }
+    </script>
+</body>
+</html>

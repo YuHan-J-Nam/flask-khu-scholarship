@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Chat Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #800000;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header img {
+            height: 100px;
+        }
+
+        .container {
+            margin: 20px auto;
+            max-width: 1000px;
+        }
+
+        #chat {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            height: 600px;
+            overflow-y: auto;
+            margin-top: 10px;
+            background-color: white;
+            border: none;
+        }
+
+        textarea {
+            flex-grow: 1;
+            height: 50px;
+            resize: none;
+        }
+
+        button {
+            background-color: #800000;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 25px;
+            flex-shrink: 0;
+        }
+
+        button:hover {
+            background-color: #990000;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .bubble {
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 20px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+
+        .user-bubble {
+            background-color: #f0f0f0; /* Light grey for user */
+            color: black;
+            align-self: flex-end;
+            text-align: right;
+        }
+
+        .llm-bubble {
+            background-color: #800000; /* Dark red for LLM */
+            color: white;
+            align-self: flex-start;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/kyunghee_logo.png') }}" alt="Logo">
+    </div>
+
+    <div class="container">
+        <h1>학금아~ 도와줘~</h1>
+        <div class="input-container">
+            <textarea id="inputText" placeholder="예) 경희대 장학팀은 어디에 위치해 있어?"></textarea>
+            <button id="sendButton" onclick="sendMessage()">Send</button>
+        </div>
+        <div id="chat">
+            <!-- Chat messages will appear here -->
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const inputText = document.getElementById("inputText").value;
+
+            if (!inputText.trim()) return; // Prevent empty messages
+
+            const chatDiv = document.getElementById("chat");
+
+            // Add the user's input immediately as a grey bubble
+            chatDiv.innerHTML += `<div class="bubble user-bubble">${inputText}</div>`;
+
+            // Scroll to the bottom
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ input: inputText })
+                });
+
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+
+                const result = await response.json();
+
+                const llmResponse = result.response;
+
+                // Add LLM's response as a red bubble
+                chatDiv.innerHTML += `<div class="bubble llm-bubble">${llmResponse}</div>`;
+
+                // Scroll to the bottom
+                chatDiv.scrollTop = chatDiv.scrollHeight;
+
+                // Clear the input text area
+                document.getElementById("inputText").value = "";
+            } catch (error) {
+                console.error("There was an error with the fetch operation:", error);
+                alert("An error occurred. Please try again.");
+            }
+        }
+    </script>
+</body>
+</html>

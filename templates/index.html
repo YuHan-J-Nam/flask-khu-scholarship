@@ -18,10 +18,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .header img {
-            height: 100px;
+            height: 80px;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #fdfdfd, #f7f7f7);
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
         }
 
         .container {
@@ -38,6 +46,49 @@
             margin-top: 10px;
             background-color: white;
             border: none;
+        }
+
+        .loading-bubble {
+            background-color: #800000;
+            color: white;
+            border-radius: 20px;
+            padding: 10px 15px;
+            margin: 5px 0;
+            max-width: 70%;
+            align-self: flex-start;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .loading-bubble::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: white;
+            animation: dot-flash 1.2s infinite;
+            position: absolute;
+            bottom: 8px;
+            left: calc(50% - 10px);
+        }
+
+        @keyframes dot-flash {
+            0%, 20% {
+                background-color: #fff;
+                transform: scale(1);
+            }
+            50% {
+                background-color: #f0f0f0;
+                transform: scale(1.2);
+            }
+            100% {
+                background-color: #fff;
+                transform: scale(1);
+            }
         }
 
         textarea {
@@ -117,6 +168,12 @@
             // Add the user's input immediately as a grey bubble
             chatDiv.innerHTML += `<div class="bubble user-bubble">${inputText}</div>`;
 
+            // Add a loading bubble for LLM response
+            const loadingBubble = document.createElement("div");
+            loadingBubble.className = "bubble llm-bubble loading-bubble";
+            loadingBubble.textContent = "    ";
+            chatDiv.appendChild(loadingBubble);
+
             // Scroll to the bottom
             chatDiv.scrollTop = chatDiv.scrollHeight;
 
@@ -135,6 +192,9 @@
 
                 const llmResponse = result.response;
 
+                // Remove the loading bubble
+                chatDiv.removeChild(loadingBubble);
+
                 // Add LLM's response as a red bubble
                 chatDiv.innerHTML += `<div class="bubble llm-bubble">${llmResponse}</div>`;
 
@@ -146,6 +206,9 @@
             } catch (error) {
                 console.error("There was an error with the fetch operation:", error);
                 alert("An error occurred. Please try again.");
+
+                // Remove the loading bubble even if there's an error
+                chatDiv.removeChild(loadingBubble);
             }
         }
     </script>

@@ -39,11 +39,11 @@ def call_llm():
     return jsonify({"response": html_response})
 
 # Delete log file when the app is shut down
-# @app.teardown_appcontext
-# def cleanup_log_file(exception=None):
-#     if os.path.exists(LOG_FILE):
-#         os.remove(LOG_FILE)
-#     return exception
+@app.teardown_appcontext
+def cleanup_log_file(exception=None):
+    if os.path.exists(LOG_FILE):
+        os.remove(LOG_FILE)
+    return exception
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -17,13 +17,12 @@ header = {
 
 # Module hash and parameters
 module_hash = {
-    "0": "c64d88b1f9d74c12be5d3e22a7ddd86b58636720a571d311069c68ca8c9e0034",
+    "0": "39c80921dd1db0b51cff11e7e3519cb062a1d8658f891e8dc4b644dff0cd3a9f",
     "1": "79759a823a132c4f63c6375c414741ab4148fb1686fcb3e3d52b412aca4d2b99",
     "2": "d9d5cda6ab02eee1cc96f79a3d0caecb372ece47c43e1471148930cdb2e96924",
     "3": "fce0ba9ecfdad62c3c38f11b07da7bf5bcb08bebd583cb80c4ff324039d5fb77",
     "99": "cdc84e9c9bc3c696c2595d4c8027be8ac200283c476ab53f2f6c29800da89c17",
 }
-
 
 params_dict = {
     "0": None,
@@ -43,7 +42,7 @@ def process_chat(user_input):
         log = f.read()
 
     recall_body = {
-        "hash": "0c9e4ff01af16290c09306f5ead960cc6357340fe129f56125458c57317d6191",
+        "hash": "59c96154c0ac7a7f92dba5e47ca695d762c7f188abb13383f6c43130d441cba9",
         "messages": [{"role": "user", "content": log}],
     }
 

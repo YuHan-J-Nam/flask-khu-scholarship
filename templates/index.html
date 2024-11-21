@@ -13,23 +13,50 @@
 
         .header {
             background-color: #800000;
-            color: white;
             padding: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
 
         .header img {
             height: 80px;
         }
 
-        body {
-            background: linear-gradient(to bottom, #fdfdfd, #f7f7f7);
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
+        .banner {
+            width: 100%;
+            max-height: 200px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .banner img {
+            width: 100%;
+            height: auto;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            width: fit-content;
+        }
+
+        .mascot {
+            width: 70px;
+            height: 70px;
+            margin-right: 15px;
+        }
+
+        .header-box {
+            background: linear-gradient(to right, #990000, #800000);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            border: 2px solid gold;
         }
 
         .container {
@@ -56,7 +83,6 @@
             margin: 5px 0;
             max-width: 70%;
             align-self: flex-start;
-            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -65,57 +91,59 @@
         }
 
         .loading-bubble::after {
-            content: '';
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: white;
-            animation: dot-flash 1.2s infinite;
-            position: absolute;
-            bottom: 8px;
-            left: calc(50% - 10px);
+            content: "...";
+            animation: dots-animation 1.2s steps(3, end) infinite;
         }
 
-        @keyframes dot-flash {
-            0%, 20% {
-                background-color: #fff;
-                transform: scale(1);
-            }
-            50% {
-                background-color: #f0f0f0;
-                transform: scale(1.2);
-            }
-            100% {
-                background-color: #fff;
-                transform: scale(1);
-            }
-        }
-
-        textarea {
-            flex-grow: 1;
-            height: 50px;
-            resize: none;
-        }
-
-        button {
-            background-color: #800000;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 25px;
-            flex-shrink: 0;
-        }
-
-        button:hover {
-            background-color: #990000;
+        @keyframes dots-animation {
+            0% { content: "."; }
+            33% { content: ".."; }
+            66% { content: "..."; }
+            100% { content: ""; }
         }
 
         .input-container {
             display: flex;
             gap: 10px;
             align-items: center;
+            background-color: #f9f9f9;
+            border-radius: 20px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        textarea {
+            flex-grow: 1;
+            height: 50px;
+            resize: none;
+            border: none;
+            border-radius: 15px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        textarea:focus {
+            outline: none;
+            background-color: #ffffff;
+        }
+
+        button {
+            background-color: #800000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 25px;
+            flex-shrink: 0;
+            transition: background-color 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background-color: #990000;
         }
 
         .bubble {
@@ -127,14 +155,14 @@
         }
 
         .user-bubble {
-            background-color: #f0f0f0; /* Light grey for user */
+            background-color: #f0f0f0;
             color: black;
             align-self: flex-end;
             text-align: right;
         }
 
         .llm-bubble {
-            background-color: #800000; /* Dark red for LLM */
+            background-color: #800000;
             color: white;
             align-self: flex-start;
             text-align: left;
@@ -146,8 +174,18 @@
         <img src="{{ url_for('static', filename='images/kyunghee_logo.png') }}" alt="Logo">
     </div>
 
+    <div class="banner">
+        <img src="{{ url_for('static', filename='images/kyunghee_campus.png') }}" alt="KyungHee University Campus">
+    </div>
+
+    <div class="header-container">
+        <img src="{{ url_for('static', filename='images/khuong.png') }}" alt="Mascot" class="mascot">
+        <div class="header-box">
+            학금아~ 도와줘~
+        </div>
+    </div>
+
     <div class="container">
-        <h1>학금아~ 도와줘~</h1>
         <div class="input-container">
             <textarea id="inputText" placeholder="예) 경희대 장학팀은 어디에 위치해 있어?"></textarea>
             <button id="sendButton" onclick="sendMessage()">Send</button>
@@ -161,20 +199,16 @@
         async function sendMessage() {
             const inputText = document.getElementById("inputText").value;
 
-            if (!inputText.trim()) return; // Prevent empty messages
+            if (!inputText.trim()) return;
 
             const chatDiv = document.getElementById("chat");
 
-            // Add the user's input immediately as a grey bubble
             chatDiv.innerHTML += `<div class="bubble user-bubble">${inputText}</div>`;
 
-            // Add a loading bubble for LLM response
             const loadingBubble = document.createElement("div");
             loadingBubble.className = "bubble llm-bubble loading-bubble";
-            loadingBubble.textContent = "    ";
             chatDiv.appendChild(loadingBubble);
 
-            // Scroll to the bottom
             chatDiv.scrollTop = chatDiv.scrollHeight;
 
             try {
@@ -192,22 +226,16 @@
 
                 const llmResponse = result.response;
 
-                // Remove the loading bubble
                 chatDiv.removeChild(loadingBubble);
 
-                // Add LLM's response as a red bubble
                 chatDiv.innerHTML += `<div class="bubble llm-bubble">${llmResponse}</div>`;
 
-                // Scroll to the bottom
                 chatDiv.scrollTop = chatDiv.scrollHeight;
 
-                // Clear the input text area
                 document.getElementById("inputText").value = "";
             } catch (error) {
                 console.error("There was an error with the fetch operation:", error);
                 alert("An error occurred. Please try again.");
-
-                // Remove the loading bubble even if there's an error
                 chatDiv.removeChild(loadingBubble);
             }
         }

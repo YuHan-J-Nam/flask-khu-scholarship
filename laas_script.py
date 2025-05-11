@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 # Load environment variables
 WANTED_API_URL = 'https://api-laas.wanted.co.kr/api/preset/v2/chat/completions'
-WANTED_API_KEY = '32f1d4fcdaa5aa91b34c4b5343d512a13e9c2d303a7f4a6da196af4d7b0463a5'
+WANTED_API_KEY = 'INPUT API KEY HERE'
 
 # Header configuration
 header = {
